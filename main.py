@@ -7,6 +7,25 @@ class main_menu:
     
     level_selected = ""
     description = "This is a brief description of how this program works."
+    level_options = [
+      "Year 1",
+      "Year 2",
+      "Year 3",
+      "Year 4",
+      "Year 5",
+      "Year 6",
+      "Year 7",
+      "Year 8",
+      "Year 9",
+      "Year 10",
+      "Year 11",
+      "Year 12",
+      "Year 13",
+      "Custom"
+    ]
+
+    selected_level = StringVar()
+    selected_level.set( "Input Quiz Level" )
     
     button_font = ("Arial", "8", "bold")
     button_fg = "#FFFFFF"
@@ -48,26 +67,10 @@ class main_menu:
                                  width=12)
     self.settings_button.grid(row=0, column=2)
 
-    level_options = [
-      "Year 1",
-      "Year 2",
-      "Year 3",
-      "Year 4",
-      "Year 5",
-      "Year 6",
-      "Year 7",
-      "Year 8",
-      "Year 9",
-      "Year 10",
-      "Year 11",
-      "Year 12",
-      "Year 13",
-      "Custom"
-    ]
+
     
-    default = StringVar()
-    default.set( "Input Quiz Level" )
-    self.level_input = OptionMenu(self.main_frame, default, *level_options)
+    
+    self.level_input = OptionMenu(self.main_frame, selected_level, *level_options)
     self.level_input.grid(row=3)
 if __name__ == "__main__":
   window = Tk()
