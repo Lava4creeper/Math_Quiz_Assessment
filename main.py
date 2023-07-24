@@ -7,7 +7,7 @@ class main_menu:
     level_selected = ""
     description = "This is a brief description of how this program works."
     button_font = ("Arial", "8", "bold")
-    button_fg = "#FFFFFF"
+    button_fg = "#000000"
     high_score = 0
     mean_score = 0
     level_options = [
@@ -51,7 +51,7 @@ class main_menu:
 
     self.instructions_button = Button(self.button_frame, 
                                      text="Instructions",
-                                     bg="#990099",
+                                     bg="#A1E887",
                                      fg=button_fg,
                                      font=button_font,
                                      width=12)
@@ -59,7 +59,7 @@ class main_menu:
 
     self.quiz_contents_button = Button(self.button_frame,
                                       text="Quiz Contents",
-                                      bg="#990099",
+                                      bg="#A1E887",
                                       fg=button_fg,
                                       font=button_font,
                                       width=12)
@@ -67,19 +67,19 @@ class main_menu:
 
     self.settings_button = Button(self.button_frame,
                                  text="Settings",
-                                 bg="#990099",
+                                 bg="#A1E887",
                                  fg=button_fg,
                                  font=button_font,
                                  width=12)
     self.settings_button.grid(row=0, column=2)
     
     self.level_input = OptionMenu(self.main_frame, selected_level, *level_options,)
-    self.level_input.config(bg="#990099", width=42, fg="#FFFFFF", font=("arial", "8", "bold"))
+    self.level_input.config(bg="#A1E887", width=42, fg="#000000", font=("arial", "8", "bold"))
     self.level_input.grid(row=3)
 
     self.multiple_choice_button = Button(self.quiz_type_frame,
                                         text="Multiple Choice",
-                                        bg="#990099",
+                                        bg="#A1E887",
                                         fg=button_fg,
                                         font=button_font,
                                         width=20)
@@ -87,7 +87,7 @@ class main_menu:
 
     self.typed_input_button = Button(self.quiz_type_frame,
                                     text="Typed Input",
-                                    bg="#990099",
+                                    bg="#A1E887",
                                     fg=button_fg,
                                     font=button_font,
                                     width=20,
@@ -96,7 +96,7 @@ class main_menu:
 
     self.begin_quiz_button = Button(self.main_frame,
                                    text="Begin Quiz",
-                                   bg="#FF0000",
+                                   bg="#80B192",
                                    fg=button_fg,
                                    font=("Arial", "30", "bold"),
                                    width=11)
@@ -109,7 +109,7 @@ class main_menu:
 
     self.history_button = Button(self.history_close_frame,
                                 text="History/Export",
-                                bg="#990099",
+                                bg="#A1E887",
                                 fg=button_fg,
                                 font=button_font,
                                 width=20)
@@ -117,7 +117,7 @@ class main_menu:
 
     self.close_button = Button(self.history_close_frame,
                                 text="Close",
-                                bg="#990099",
+                                bg="#A1E887",
                                 fg=button_fg,
                                 font=button_font,
                                 width=20)
@@ -127,5 +127,6 @@ if __name__ == "__main__":
   window = Tk()
   window.title("Main Menu")
   window.geometry("430x900")
+  # indow.configure(bg="#6A8D92")
   main_menu()
   window.mainloop()
