@@ -166,7 +166,7 @@ if __name__ == "__main__":
   #Create, name and size the window
   window = Tk()
   window.title("Main Menu")
-  window.geometry("430x900")
+  window.geometry("360x300")
   #window.configure(bg="#6A8D92")
   # open main menu
   main_menu()
