@@ -10,6 +10,9 @@ class main_menu:
     description = "This is a brief description of how this program works."
     button_font = ("Arial", "8", "bold")
     button_fg = "#000000"
+    selected_level = StringVar()
+    selected_level.set("Input Quiz Level")
+    print(selected_level.get())
     level_options = [
       "Year 1",
       "Year 2",
@@ -26,14 +29,16 @@ class main_menu:
       "Year 13",
       "Custom"
     ]
+
+    # Set up system to retrieve scores from
     with open("history.txt", "r") as history_file:
       history = [int(x) for x in history_file.readlines()]
+    # Retrieve high score
     high_score = max(history)
+    # Retrieve average score
     mean_score = round(sum(history) / len(history))
     history_file.close()
-    selected_level = StringVar()
-    selected_level.set("Input Quiz Level")
-    print(selected_level.get())
+
     
     # Form a frame to place all elements on
     self.main_frame = Frame(padx=10, pady=10)
@@ -125,12 +130,13 @@ class main_menu:
     self.history_close_frame = Frame(self.main_frame)
     self.history_close_frame.grid(row=7, column=0)
     
-    # Create and display a label with the highest and average scores
+    # Create and display a label with the high score
     self.high_score_display = Label(self.history_close_frame,
                                text="High Score: {}".format(high_score),
                                fg="#9C0000")
     self.high_score_display.grid(row=0, column=0)
 
+    # Create and display a label with the mean score
     self.mean_score_display = Label(self.history_close_frame,
                                text="Average Score: {}".format(mean_score),
                                fg="#9C0000")
@@ -157,16 +163,20 @@ class main_menu:
                               command=lambda: self.button_pressed("close", selected_level.get()))
     self.close_button.grid(row=1, column=1)
 
+  #Set up a function to output commands based on what button's been pressed
   def button_pressed(self, button, level):
+    #Output pressed button and selected level to console
     print(button)
+    print(level)
+    
+    #Invert state of buttons multiple choice and typed input 
     if button == "multiple choice":
       self.multiple_choice_button.config(state=DISABLED)
       self.typed_input_button.config(state=NORMAL)
     elif button == "typed input":
       self.typed_input_button.config(state=DISABLED)
       self.multiple_choice_button.config(state=NORMAL)
-    print(level)
-
+    
 #**************Main Routine******************
 
 # Check that code has been run directly by the interpreter
