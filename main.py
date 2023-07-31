@@ -10,8 +10,6 @@ class main_menu:
     description = "This is a brief description of how this program works."
     button_font = ("Arial", "8", "bold")
     button_fg = "#000000"
-    high_score = 0
-    mean_score = 0
     level_options = [
       "Year 1",
       "Year 2",
@@ -28,7 +26,11 @@ class main_menu:
       "Year 13",
       "Custom"
     ]
-
+    with open("history.txt", "r") as history_file:
+      history = [int(x) for x in history_file.readlines()]
+    high_score = max(history)
+    mean_score = round(sum(history) / len(history))
+    history_file.close()
     selected_level = StringVar()
     selected_level.set("Input Quiz Level")
     print(selected_level.get())
@@ -119,15 +121,21 @@ class main_menu:
                                    command=lambda: self.button_pressed("start", selected_level.get()))
     self.begin_quiz_button.grid(row=5)
 
-    # Create and display a label with the highest and average scores
-    self.scores_display = Label(self.main_frame,
-                               text="High Score: {}        Average Score: {}".format(high_score, mean_score),
-                               fg="#9C0000")
-    self.scores_display.grid(row=6)
-
     # Create and place a frame for the history and close buttons
     self.history_close_frame = Frame(self.main_frame)
-    self.history_close_frame.grid(row=7)
+    self.history_close_frame.grid(row=7, column=0)
+    
+    # Create and display a label with the highest and average scores
+    self.high_score_display = Label(self.history_close_frame,
+                               text="High Score: {}".format(high_score),
+                               fg="#9C0000")
+    self.high_score_display.grid(row=0, column=0)
+
+    self.mean_score_display = Label(self.history_close_frame,
+                               text="Average Score: {}".format(mean_score),
+                               fg="#9C0000")
+    self.mean_score_display.grid(row=0, column=1)
+
 
     # Create and place a history/export button within the previously created frame
     self.history_button = Button(self.history_close_frame,
@@ -137,7 +145,7 @@ class main_menu:
                                 font=button_font,
                                 width=20,
                                 command=lambda: self.button_pressed("history", selected_level.get()))
-    self.history_button.grid(row=0, column=0)
+    self.history_button.grid(row=1, column=0)
 
     # Create and place a Close button within the previously created frame
     self.close_button = Button(self.history_close_frame,
@@ -147,7 +155,7 @@ class main_menu:
                                 font=button_font,
                                 width=20,
                               command=lambda: self.button_pressed("close", selected_level.get()))
-    self.close_button.grid(row=0, column=1)
+    self.close_button.grid(row=1, column=1)
 
   def button_pressed(self, button, level):
     print(button)
