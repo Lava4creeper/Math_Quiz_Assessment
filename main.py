@@ -1,18 +1,22 @@
 # Import statements
 from tkinter import *
-
+from functools import partial
 # Define main menu class
 class main_menu:
   #Upon initialisation
   def __init__(self):
-
-    #Initialise variables
-    description = "This is a brief description of how this program works."
+    
+    #Create, name and size the window
+    self.main_window = Tk()
+    self.main_window.title("Main Menu")
+    self.main_window.geometry("360x320")
+    
+    #Initialise and assign variables and lists
+    description = "Welcome to Maths Time! This game is designed to help you develop your maths skills and abilities through quizzes."
     button_font = ("Arial", "8", "bold")
     button_fg = "#000000"
     selected_level = StringVar()
     selected_level.set("Input Quiz Level")
-    print(selected_level.get())
     level_options = [
       "Year 1",
       "Year 2",
@@ -30,7 +34,7 @@ class main_menu:
       "Custom"
     ]
 
-    # Set up system to retrieve scores from
+    # Set up system to retrieve scores from file
     with open("history.txt", "r") as history_file:
       history = [int(x) for x in history_file.readlines()]
     # Retrieve high score
@@ -45,7 +49,7 @@ class main_menu:
     self.main_frame.grid()
 
     # Create and place the heading of the page
-    self.main_heading = Label(self.main_frame, text="Hello World", font=("Arial", "16", "bold"))
+    self.main_heading = Label(self.main_frame, text="Maths time!", font=("Arial", "16", "bold"))
     self.main_heading.grid(row=0)
 
     # Create and place a brief description of the quiz
@@ -102,6 +106,7 @@ class main_menu:
                                         fg=button_fg,
                                         font=button_font,
                                         width=20,
+                                         #state=DISABLED,
                                         command=lambda: self.button_pressed("multiple choice", selected_level.get()))
     self.multiple_choice_button.grid(column=0, row=0)
 
@@ -112,7 +117,6 @@ class main_menu:
                                     fg=button_fg,
                                     font=button_font,
                                     width=20,
-                                    state=DISABLED,
                                     command=lambda: self.button_pressed("typed input", selected_level.get()))
     self.typed_input_button.grid(column=1, row=0)
 
@@ -163,29 +167,176 @@ class main_menu:
                               command=lambda: self.button_pressed("close", selected_level.get()))
     self.close_button.grid(row=1, column=1)
 
+    self.error_label = Label(self.main_frame, 
+                            text="",
+                            font= ("Arial", "10"),
+                            fg="#FF0000")
+    self.error_label.grid(row=8)
   #Set up a function to output commands based on what button's been pressed
   def button_pressed(self, button, level):
-    #Output pressed button and selected level to console
-    print(button)
-    print(level)
-    
+    if button == "instructions":
+      self.main_window.destroy()
+      instructions()
+    elif button == "contents":
+      self.main_window.destroy()
+      contents()
+    elif button == "settings":
+      self.main_window.destroy()
+      settings()
+    elif button == "start":
+      if level != "Input Quiz Level":
+        self.main_window.destroy()
+        quiz(level)
+      else:
+        self.error_label.config(text="Please select a level")
+        #ask user to input a level
+        pass
+    elif button == "history":
+      self.main_window.destroy()
+      history()
+    elif button == "close":
+      self.main_window.destroy()
     #Invert state of buttons multiple choice and typed input 
-    if button == "multiple choice":
-      self.multiple_choice_button.config(state=DISABLED)
-      self.typed_input_button.config(state=NORMAL)
-    elif button == "typed input":
-      self.typed_input_button.config(state=DISABLED)
-      self.multiple_choice_button.config(state=NORMAL)
-    
+    elif button == "multiple choice" or button == "typed input":
+      if button == "multiple choice":
+        self.multiple_choice_button.config(state=DISABLED)
+        self.typed_input_button.config(state=NORMAL)
+        
+      else:
+        self.typed_input_button.config(state=DISABLED)
+        self.multiple_choice_button.config(state=NORMAL)
+        
+      with open("settings.txt", "r") as file:
+        settings_list = file.readlines()
+        
+      settings_list[0] = "quiz mode: {}".format(button)
+      
+      with open("settings.txt", "w") as file:
+        file.writelines(settings_list)
+        
+class instructions:
+  
+  def __init__(self):
+
+    button = ""
+    self.instructions_window = Tk()
+    print("instructions")
+
+    self.instructions_frame = Frame(padx=10,pady=10)
+    self.instructions_frame.grid()
+
+    self.home_button = Button(self.instructions_frame,
+                             text="Home",
+                             bg="#A1E887",
+                             fg="#000000",
+                             font=("Arial", "8", "bold"),
+                             width=20,
+                             command=lambda: self.home_button_pressed("home")
+                             )
+    self.home_button.grid(row=0)
+  def home_button_pressed(self, button):
+    if button == "home":
+      self.instructions_window.destroy()  
+      main_menu()
+class contents:
+  
+  def __init__(self):
+
+    button = ""
+    self.contents_window = Tk()
+    print("contents")
+
+    self.contents_frame = Frame(padx=10,pady=10)
+    self.contents_frame.grid()
+
+    self.home_button = Button(self.contents_frame,
+                             text="Home",
+                             bg="#A1E887",
+                             fg="#000000",
+                             font=("Arial", "8", "bold"),
+                             width=20,
+                             command=lambda: self.home_button_pressed("home")
+                             )
+    self.home_button.grid(row=0)
+  def home_button_pressed(self, button):
+    if button == "home":
+      self.contents_window.destroy()  
+      main_menu()
+class settings:
+  
+  def __init__(self):
+
+    button = ""
+    self.settings_window = Tk()
+    print("instructions")
+
+    self.settings_frame = Frame(padx=10,pady=10)
+    self.settings_frame.grid()
+
+    self.home_button = Button(self.settings_frame,
+                             text="Home",
+                             bg="#A1E887",
+                             fg="#000000",
+                             font=("Arial", "8", "bold"),
+                             width=20,
+                             command=lambda: self.home_button_pressed("home")
+                             )
+    self.home_button.grid(row=0)
+  def home_button_pressed(self, button):
+    if button == "home":
+      self.settings_window.destroy()  
+      main_menu()
+class quiz:  
+  def __init__(self, level):
+    print(level)
+    button = ""
+    self.quiz_window = Tk()
+    print("quiz")
+
+    self.quiz_frame = Frame(padx=10,pady=10)
+    self.quiz_frame.grid()
+
+    self.home_button = Button(self.quiz_frame,
+                             text="Home",
+                             bg="#A1E887",
+                             fg="#000000",
+                             font=("Arial", "8", "bold"),
+                             width=20,
+                             command=lambda: self.home_button_pressed("home")
+                             )
+    self.home_button.grid(row=0)
+  def home_button_pressed(self, button):
+    if button == "home":
+      self.quiz_window.destroy()  
+      main_menu()    
+class history: 
+  def __init__(self):
+
+    button = ""
+    self.history_window = Tk()
+    print("history")
+
+    self.history_frame = Frame(padx=10,pady=10)
+    self.history_frame.grid()
+
+    self.home_button = Button(self.history_frame,
+                             text="Home",
+                             bg="#A1E887",
+                             fg="#000000",
+                             font=("Arial", "8", "bold"),
+                             width=20,
+                             command=lambda: self.home_button_pressed("home")
+                             )
+    self.home_button.grid(row=0)
+  def home_button_pressed(self, button):
+    if button == "home":
+      self.history_window.destroy()  
+      main_menu()
 #**************Main Routine******************
 
 # Check that code has been run directly by the interpreter
 if __name__ == "__main__":
-  #Create, name and size the window
-  window = Tk()
-  window.title("Main Menu")
-  window.geometry("360x300")
+  
   #window.configure(bg="#6A8D92")
   # open main menu
   main_menu()
-  window.mainloop()
