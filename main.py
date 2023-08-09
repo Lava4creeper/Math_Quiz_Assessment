@@ -1,6 +1,7 @@
 # Import statements
 from tkinter import *
 from functools import partial
+
 # Define main menu class
 class main_menu:
   #Upon initialisation
@@ -34,15 +35,13 @@ class main_menu:
       "Custom"
     ]
 
-    # Set up system to retrieve scores from file
+    # Set up system to retrieve scores from history file
     with open("history.txt", "r") as history_file:
       history = [int(x) for x in history_file.readlines()]
     # Retrieve high score
     high_score = max(history)
-    # Retrieve average score
+    # Retrieve mean score
     mean_score = round(sum(history) / len(history))
-    history_file.close()
-
     
     # Form a frame to place all elements on
     self.main_frame = Frame(padx=10, pady=10)
@@ -106,7 +105,6 @@ class main_menu:
                                         fg=button_fg,
                                         font=button_font,
                                         width=20,
-                                         #state=DISABLED,
                                         command=lambda: self.button_pressed("multiple choice", selected_level.get()))
     self.multiple_choice_button.grid(column=0, row=0)
 
@@ -120,6 +118,14 @@ class main_menu:
                                     command=lambda: self.button_pressed("typed input", selected_level.get()))
     self.typed_input_button.grid(column=1, row=0)
 
+    # Check what quiz type was last selected and disable that button
+    with open("settings.txt") as file:
+      settings = file.readlines()
+    if settings[0] == "quiz mode: multiple choice":
+      self.multiple_choice_button.config(state=DISABLED)
+    elif settings[0] == "quiz mode: typed input":
+      self.typed_input_button.config(state=DISABLED)
+      
     # Create and place a Begin Quiz button]
     self.begin_quiz_button = Button(self.main_frame,
                                    text="Begin Quiz",
@@ -167,13 +173,16 @@ class main_menu:
                               command=lambda: self.button_pressed("close", selected_level.get()))
     self.close_button.grid(row=1, column=1)
 
+    #Set up an output that will tell the user to select a level if they haven't
     self.error_label = Label(self.main_frame, 
                             text="",
                             font= ("Arial", "10"),
                             fg="#FF0000")
     self.error_label.grid(row=8)
+    
   #Set up a function to output commands based on what button's been pressed
   def button_pressed(self, button, level):
+    #Nested if statements in order to determine the button pressed, destroy the main window and send the program to the appropriate class
     if button == "instructions":
       self.main_window.destroy()
       instructions()
@@ -183,18 +192,18 @@ class main_menu:
     elif button == "settings":
       self.main_window.destroy()
       settings()
+    elif button == "history":
+      self.main_window.destroy()
+      history()
     elif button == "start":
+      #Check if user has chosen a quiz level; if they have go to the quiz, if not ask them to.
       if level != "Input Quiz Level":
         self.main_window.destroy()
         quiz(level)
       else:
         self.error_label.config(text="Please select a level")
-        #ask user to input a level
-        pass
-    elif button == "history":
-      self.main_window.destroy()
-      history()
     elif button == "close":
+      # Close window without opening a new one
       self.main_window.destroy()
     #Invert state of buttons multiple choice and typed input 
     elif button == "multiple choice" or button == "typed input":
@@ -205,15 +214,19 @@ class main_menu:
       else:
         self.typed_input_button.config(state=DISABLED)
         self.multiple_choice_button.config(state=NORMAL)
-        
+
+      #assign settings list to a list 
       with open("settings.txt", "r") as file:
         settings_list = file.readlines()
-        
+
+      # assign first line of settings to the selected quiz type
       settings_list[0] = "quiz mode: {}".format(button)
-      
+
+      # write new settings list back to file
       with open("settings.txt", "w") as file:
         file.writelines(settings_list)
-        
+
+# Create instructions class
 class instructions:
   
   def __init__(self):
@@ -238,6 +251,7 @@ class instructions:
     if button == "home":
       self.instructions_window.destroy()  
       main_menu()
+# Create contents class
 class contents:
   
   def __init__(self):
@@ -262,6 +276,7 @@ class contents:
     if button == "home":
       self.contents_window.destroy()  
       main_menu()
+# Create settings class
 class settings:
   
   def __init__(self):
@@ -286,6 +301,7 @@ class settings:
     if button == "home":
       self.settings_window.destroy()  
       main_menu()
+# Create quiz class
 class quiz:  
   def __init__(self, level):
     print(level)
@@ -309,6 +325,7 @@ class quiz:
     if button == "home":
       self.quiz_window.destroy()  
       main_menu()    
+# Create history class
 class history: 
   def __init__(self):
 
