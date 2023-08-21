@@ -1,6 +1,6 @@
 # Import statements
 from tkinter import *
-from functools import partial
+import random
 
 # Define main menu class
 class main_menu:
@@ -17,22 +17,13 @@ class main_menu:
     button_font = ("Arial", "8", "bold")
     button_fg = "#000000"
     selected_level = StringVar()
-    selected_level.set("Input Quiz Level")
+    selected_level.set("Select a quiz type")
     level_options = [
-      "Year 1",
-      "Year 2",
-      "Year 3",
-      "Year 4",
-      "Year 5",
-      "Year 6",
-      "Year 7",
-      "Year 8",
-      "Year 9",
-      "Year 10",
-      "Year 11",
-      "Year 12",
-      "Year 13",
-      "Custom"
+      "Addition",
+      "Subtraction",
+      "Multiplication",
+      "Divison",
+      "Trigonometry"
     ]
 
     # Set up system to retrieve scores from history file
@@ -120,10 +111,10 @@ class main_menu:
 
     # Check what quiz type was last selected and disable that button
     with open("settings.txt") as file:
-      settings = file.readlines()
-    if settings[0] == "quiz mode: multiple choice":
+      settings_list = file.readlines()
+    if settings_list[0] == "quiz mode: multiple choice":
       self.multiple_choice_button.config(state=DISABLED)
-    elif settings[0] == "quiz mode: typed input":
+    elif settings_list[0] == "quiz mode: typed input":
       self.typed_input_button.config(state=DISABLED)
       
     # Create and place a Begin Quiz button]
@@ -197,7 +188,7 @@ class main_menu:
       history()
     elif button == "start":
       #Check if user has chosen a quiz level; if they have go to the quiz, if not ask them to.
-      if level != "Input Quiz Level":
+      if level != "Select a quiz type":
         self.main_window.destroy()
         quiz(level)
       else:
@@ -304,14 +295,88 @@ class settings:
 # Create quiz class
 class quiz:  
   def __init__(self, level):
-    print(level)
-    button = ""
-    self.quiz_window = Tk()
-    print("quiz")
 
+    # Initialise variables
+    button = ""
+    question = "question"
+    #Create window
+    self.quiz_window = Tk()
+    self.quiz_window.title("Quiz")
+    #self.quiz_window.geometry("360x320")
+    
+    #Create frame to place elements in
     self.quiz_frame = Frame(padx=10,pady=10)
     self.quiz_frame.grid()
 
+    #Create label to place question in
+    self.question_label = Label(self.quiz_frame, text=question, wrap=250, width=10, height = 2, justify="left", font=("arial", "20", "bold"))
+    self.question_label.grid(row=0)
+
+    with open("settings.txt", "r") as file:
+      settings_list = file.readlines()
+      
+    if settings_list[0] == "quiz mode: multiple choice":
+      self.choice_button_1 = Button(self.quiz_frame, 
+                              text="option one",
+                              bg="#A1E887",
+                               fg="#000000",
+                              font=("Arial", "8", "bold"),
+                              width=20,
+                              command=lambda: self.submit_answer(1))
+      self.choice_button_1.grid(row=1)
+      
+      self.choice_button_2 = Button(self.quiz_frame, 
+                              text="option two",
+                              bg="#A1E887",
+                               fg="#000000",
+                              font=("Arial", "8", "bold"),
+                              width=20,
+                              command=lambda: self.submit_answer(2))
+      self.choice_button_2.grid(row=2)
+      
+      self.choice_button_3 = Button(self.quiz_frame, 
+                              text="option three",
+                              bg="#A1E887",
+                               fg="#000000",
+                              font=("Arial", "8", "bold"),
+                              width=20,
+                              command=lambda: self.submit_answer(3))
+      self.choice_button_3.grid(row=3)
+
+      self.choice_button_4 = Button(self.quiz_frame, 
+                              text="option four",
+                              bg="#A1E887",
+                               fg="#000000",
+                              font=("Arial", "8", "bold"),
+                              width=20,
+                              command=lambda: self.submit_answer(4))
+      self.choice_button_4.grid(row=4)
+
+    else:
+      self.answer_entry = Entry(self.quiz_frame,
+                          bg="#FFFFFF",
+                          font=("Arial", "8", "bold"),
+                          fg="#000000",
+                          width=20
+                          )
+      self.answer_entry.grid(row=1)
+      
+      self.error_label = Label(self.quiz_frame,
+                              text="",
+                              font=("Arial", "8", "bold"),
+                              fg="#000000")
+      self.error_label.grid(row=2)
+
+      self.submit_button = Button(self.quiz_frame,
+                                 text="Submit",
+                                 bg="#A1E887",
+                                 fg="#000000",
+                                 font=("Arial", "8", "bold"),
+                                 width=20,
+                                 command=lambda: self.submit_answer(self.answer_entry.get())
+                                 )
+      self.submit_button.grid(row=3)
+    
     self.home_button = Button(self.quiz_frame,
                              text="Home",
                              bg="#A1E887",
@@ -320,11 +385,15 @@ class quiz:
                              width=20,
                              command=lambda: self.home_button_pressed("home")
                              )
-    self.home_button.grid(row=0)
+    
+    self.home_button.grid(row=10)
+
+  def submit_answer(self, submitted_answer):
+    print("{}".format(submitted_answer))
   def home_button_pressed(self, button):
     if button == "home":
-      self.quiz_window.destroy()  
-      main_menu()    
+      self.quiz_window.destroy()
+      main_menu()
 # Create history class
 class history: 
   def __init__(self):
