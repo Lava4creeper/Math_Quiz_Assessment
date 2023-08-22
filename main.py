@@ -174,6 +174,12 @@ class main_menu:
   #Set up a function to output commands based on what button's been pressed
   def button_pressed(self, button, level):
     #Nested if statements in order to determine the button pressed, destroy the main window and send the program to the appropriate class
+    with open("settings.txt", "r") as file:
+      settings_list = file.readlines()
+    settings_list[1] = "Level Selected: {}".format(level)
+    with open("settings.txt", "w") as file:
+      file.writelines(settings_list)
+      
     if button == "instructions":
       self.main_window.destroy()
       instructions()
@@ -387,9 +393,13 @@ class quiz:
                              )
     
     self.home_button.grid(row=10)
-
+  def generate_question(self):
+    #if selected_level.get() == "addition":
+      #print("it works")
+    pass
   def submit_answer(self, submitted_answer):
     print("{}".format(submitted_answer))
+    self.generate_question()
   def home_button_pressed(self, button):
     if button == "home":
       self.quiz_window.destroy()
