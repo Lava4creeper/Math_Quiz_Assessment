@@ -175,8 +175,9 @@ class main_menu:
   def button_pressed(self, button, level):
     #Nested if statements in order to determine the button pressed, destroy the main window and send the program to the appropriate class
     with open("settings.txt", "r") as file:
-      settings_list = file.readlines()
-    settings_list[1] = "Level Selected: {}".format(level)
+      settings_list = [x for x in file.readlines()]
+    
+    settings_list[1] = "Level Selected: {}\n".format(level)
     with open("settings.txt", "w") as file:
       file.writelines(settings_list)
       
@@ -214,10 +215,10 @@ class main_menu:
 
       #assign settings list to a list 
       with open("settings.txt", "r") as file:
-        settings_list = file.readlines()
+        settings_list = [x for x in file.readlines()]
 
       # assign first line of settings to the selected quiz type
-      settings_list[0] = "quiz mode: {}".format(button)
+      settings_list[0] = "quiz mode: {}\n".format(button)
 
       # write new settings list back to file
       with open("settings.txt", "w") as file:
@@ -319,7 +320,7 @@ class quiz:
     self.question_label.grid(row=0)
 
     with open("settings.txt", "r") as file:
-      settings_list = file.readlines()
+      settings_list = [x for x in file.readlines()]
       
     if settings_list[0] == "quiz mode: multiple choice":
       self.choice_button_1 = Button(self.quiz_frame, 
@@ -394,6 +395,8 @@ class quiz:
     
     self.home_button.grid(row=10)
   def generate_question(self):
+    with open("settings.txt", "r") as file:
+      settings_list = [x for x in file.readlines()]
     #if selected_level.get() == "addition":
       #print("it works")
     pass
