@@ -1,2 +1,2 @@
-quiz mode: multiple choice
-Level Selected: Addition
+quiz mode: typed input
+level selected: Multiplication

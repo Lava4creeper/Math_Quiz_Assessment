@@ -22,8 +22,7 @@ class main_menu:
       "Addition",
       "Subtraction",
       "Multiplication",
-      "Divison",
-      "Trigonometry"
+      "Division"
     ]
 
     # Set up system to retrieve scores from history file
@@ -112,9 +111,9 @@ class main_menu:
     # Check what quiz type was last selected and disable that button
     with open("settings.txt") as file:
       settings_list = file.readlines()
-    if settings_list[0] == "quiz mode: multiple choice":
+    if settings_list[0] == "quiz mode: multiple choice\n":
       self.multiple_choice_button.config(state=DISABLED)
-    elif settings_list[0] == "quiz mode: typed input":
+    elif settings_list[0] == "quiz mode: typed input\n":
       self.typed_input_button.config(state=DISABLED)
       
     # Create and place a Begin Quiz button]
@@ -177,7 +176,7 @@ class main_menu:
     with open("settings.txt", "r") as file:
       settings_list = [x for x in file.readlines()]
     
-    settings_list[1] = "Level Selected: {}\n".format(level)
+    settings_list[1] = "level selected: {}\n".format(level)
     with open("settings.txt", "w") as file:
       file.writelines(settings_list)
       
@@ -195,7 +194,7 @@ class main_menu:
       history()
     elif button == "start":
       #Check if user has chosen a quiz level; if they have go to the quiz, if not ask them to.
-      if level != "Select a quiz type":
+      if settings_list[1] != "level selected: Select a quiz type\n":
         self.main_window.destroy()
         quiz(level)
       else:
@@ -205,6 +204,14 @@ class main_menu:
       self.main_window.destroy()
     #Invert state of buttons multiple choice and typed input 
     elif button == "multiple choice" or button == "typed input":
+
+      # assign first line of settings to the selected quiz type
+      settings_list[0] = "quiz mode: {}\n".format(button)
+
+      # write new settings list back to file
+      with open("settings.txt", "w") as file:
+        file.writelines(settings_list)
+        
       if button == "multiple choice":
         self.multiple_choice_button.config(state=DISABLED)
         self.typed_input_button.config(state=NORMAL)
@@ -212,10 +219,6 @@ class main_menu:
       else:
         self.typed_input_button.config(state=DISABLED)
         self.multiple_choice_button.config(state=NORMAL)
-
-      #assign settings list to a list 
-      with open("settings.txt", "r") as file:
-        settings_list = [x for x in file.readlines()]
 
       # assign first line of settings to the selected quiz type
       settings_list[0] = "quiz mode: {}\n".format(button)
@@ -306,6 +309,8 @@ class quiz:
     # Initialise variables
     button = ""
     question = "question"
+    with open("settings.txt", "r") as file:
+      settings_list = [x for x in file.readlines()]
     #Create window
     self.quiz_window = Tk()
     self.quiz_window.title("Quiz")
@@ -322,14 +327,14 @@ class quiz:
     with open("settings.txt", "r") as file:
       settings_list = [x for x in file.readlines()]
       
-    if settings_list[0] == "quiz mode: multiple choice":
+    if settings_list[0] == "quiz mode: multiple choice\n":
       self.choice_button_1 = Button(self.quiz_frame, 
                               text="option one",
                               bg="#A1E887",
                                fg="#000000",
                               font=("Arial", "8", "bold"),
-                              width=20,
-                              command=lambda: self.submit_answer(1))
+                              width=20
+                                   )
       self.choice_button_1.grid(row=1)
       
       self.choice_button_2 = Button(self.quiz_frame, 
@@ -337,8 +342,7 @@ class quiz:
                               bg="#A1E887",
                                fg="#000000",
                               font=("Arial", "8", "bold"),
-                              width=20,
-                              command=lambda: self.submit_answer(2))
+                              width=20)
       self.choice_button_2.grid(row=2)
       
       self.choice_button_3 = Button(self.quiz_frame, 
@@ -346,8 +350,7 @@ class quiz:
                               bg="#A1E887",
                                fg="#000000",
                               font=("Arial", "8", "bold"),
-                              width=20,
-                              command=lambda: self.submit_answer(3))
+                              width=20)
       self.choice_button_3.grid(row=3)
 
       self.choice_button_4 = Button(self.quiz_frame, 
@@ -355,8 +358,7 @@ class quiz:
                               bg="#A1E887",
                                fg="#000000",
                               font=("Arial", "8", "bold"),
-                              width=20,
-                              command=lambda: self.submit_answer(4))
+                              width=20)
       self.choice_button_4.grid(row=4)
 
     else:
@@ -364,8 +366,7 @@ class quiz:
                           bg="#FFFFFF",
                           font=("Arial", "8", "bold"),
                           fg="#000000",
-                          width=20
-                          )
+                          width=20)
       self.answer_entry.grid(row=1)
       
       self.error_label = Label(self.quiz_frame,
@@ -394,15 +395,52 @@ class quiz:
                              )
     
     self.home_button.grid(row=10)
-  def generate_question(self):
-    with open("settings.txt", "r") as file:
-      settings_list = [x for x in file.readlines()]
-    #if selected_level.get() == "addition":
-      #print("it works")
-    pass
-  def submit_answer(self, submitted_answer):
+    self.generate_question(settings_list)
+  def generate_question(self, settings_list):
+    red_herrings = [-10, -9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    number_1 = random.randint(1, 20)
+    number_2 = random.randint(1, 20)
+    
+    if settings_list[1] == "level selected: Addition\n":
+      number_3 = number_1 + number_2
+      question_list = [number_2, "+", number_1, number_3]
+      
+    elif settings_list[1] == "level selected: Subtraction\n":
+      if number_1 > number_2:
+        number_3 = number_1 - number_2
+        question_list = [number_1, "-", number_2, number_3]
+      else:
+        number_3 = number_2 - number_1
+        question_list = [number_2, "-", number_1, number_3]
+        
+    elif settings_list[1] == "level selected: Multiplication\n":
+      number_3 = number_1 * number_2
+      question_list = [number_1, "x", number_2, number_3]
+      
+    elif settings_list[1] == "level selected: Division\n":
+      number_3 = number_1 * number_2
+      question_list = [number_3, "÷", number_2, number_1]
+
+    self.question_label.config(text="{} {} {} = ?".format(question_list[0], question_list[1], question_list[2]))
+
+    print(question_list)
+    if settings_list[0] == "quiz mode: multiple choice\n":
+      print("here")
+      random.shuffle(red_herrings)
+      answers = [question_list[3], question_list[3] + red_herrings[0], question_list[3] + red_herrings[1], question_list[3] + red_herrings[2]]
+      random.shuffle(answers)
+
+      self.choice_button_1.config(command=lambda: self.submit_answer(answers[0], question_list[3]), text="{}".format(answers[0]))
+      self.choice_button_2.config(command=lambda: self.submit_answer(answers[1], question_list[3]),text="{}".format(answers[1]))
+      self.choice_button_3.config(command=lambda: self.submit_answer(answers[2], question_list[3]),text="{}".format(answers[2]))
+      self.choice_button_4.config(command=lambda: self.submit_answer(answers[3], question_list[3]),text="{}".format(answers[3]))
+      
+    print(question_list)
+    
+  def submit_answer(self, submitted_answer, correct_answer):
     print("{}".format(submitted_answer))
-    self.generate_question()
+    self.generate_question(answer, settings_list)
+    
   def home_button_pressed(self, button):
     if button == "home":
       self.quiz_window.destroy()
