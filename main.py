@@ -521,6 +521,15 @@ class quiz:
       if quiz_time <= 20:
         self.quiz_frame.after(2500, lambda: self.generate_question(settings_list, start_time, score))
       else:
+        with open("history.txt", "r") as file:
+          history_list = file.readlines()
+          print(history_list)
+        if history_list[0] != "0\n":
+          with open("history.txt", "a") as file:
+           file.write("\n{}".format(score))
+        else:
+          with open("history.txt", "w") as file:
+            file.writelines("{}".format(score))
         self.quiz_frame.after(2500, self.output_label.config(fg="#FF0000", text="Time up! Score: {}".format(score)))
         #self.output_label.config(fg="#FF0000", text="Time up! Score: {}".format(score))
         self.quiz_frame.after(2500, lambda:self.home_button_pressed("home"))
