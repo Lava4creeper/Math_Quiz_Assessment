@@ -475,19 +475,23 @@ class quiz:
       self.choice_button_1.config(command=lambda: self.check_answer(
         answers[0], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[0]),
-                                  state=NORMAL)
+                                  state=NORMAL,
+                                  disabledforeground="#000000")
       self.choice_button_2.config(command=lambda: self.check_answer(
         answers[1], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[1]),
-                                  state=NORMAL)
+                                  state=NORMAL,
+                                 disabledforeground="#000000")
       self.choice_button_3.config(command=lambda: self.check_answer(
         answers[2], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[2]),
-                                  state=NORMAL)
+                                  state=NORMAL,
+                                 disabledforeground="#000000")
       self.choice_button_4.config(command=lambda: self.check_answer(
         answers[3], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[3]),
-                                  state=NORMAL)
+                                  state=NORMAL,
+                                 disabledforeground="#000000")
 
     else:
       self.answer_entry.delete(0, END)
@@ -495,20 +499,15 @@ class quiz:
         self.answer_entry.get(), question_list, settings_list, start_time, score), state=NORMAL)
 
   def check_answer(self, submitted_answer, question_list, settings_list, start_time, score):
-    if settings_list[0] == "quiz type: multiple choice\n":    
-      self.choice_button_1.config(state=DISABLED)
-      self.choice_button_2.config(state=DISABLED)
-      self.choice_button_3.config(state=DISABLED)
-      self.choice_button_4.config(state=DISABLED)
-    elif settings_list[0] == "quiz type: typed input\n":
-      self.submit_button.config(state=DISABLED)
-
+    print("here")
     try:
       if int(submitted_answer) == question_list[3]:
         print("Correct!")
         self.output_label.config(text="Correct!", fg="#008000")
         score += 1
       else:
+        with open("wrong_questions.txt", "a") as file:
+          file.write("question: {} {} {} = {}. input: {}\n".format(question_list[0], question_list[1], question_list[2], question_list[3], submitted_answer))
         print("incorrect. {} {} {} = {}".format(question_list[0],
                                                 question_list[1],
                                                 question_list[2],
@@ -517,6 +516,14 @@ class quiz:
                                                 question_list[1],
                                                 question_list[2],
                                                 question_list[3]))
+      if settings_list[0] == "quiz mode: multiple choice\n":
+        print("there")
+        self.choice_button_1.config(state=DISABLED)
+        self.choice_button_2.config(state=DISABLED)
+        self.choice_button_3.config(state=DISABLED)
+        self.choice_button_4.config(state=DISABLED)
+      elif settings_list[0] == "quiz mode: typed input\n":
+        self.submit_button.config(state=DISABLED)
       quiz_time = time.time() - start_time
       if quiz_time <= 20:
         self.quiz_frame.after(2500, lambda: self.generate_question(settings_list, start_time, score))

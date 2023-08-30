@@ -1,2 +1,2 @@
-quiz mode: typed input
-level selected: Subtraction
+quiz mode: multiple choice
+level selected: Addition
