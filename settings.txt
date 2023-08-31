@@ -1,2 +1,2 @@
 quiz mode: multiple choice
-level selected: Addition
+level selected: Select a quiz type

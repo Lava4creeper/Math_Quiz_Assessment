@@ -427,7 +427,7 @@ class quiz:
                               fg="#000000",
                               font=("Arial", "8", "bold"),
                               width=20,
-                              command=lambda:self.home_button_pressed("home"))
+                              command=lambda:self.send_home("home", score))
 
     self.home_button.grid(row=10)
     self.generate_question(settings_list, start_time, score)
@@ -475,23 +475,19 @@ class quiz:
       self.choice_button_1.config(command=lambda: self.check_answer(
         answers[0], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[0]),
-                                  state=NORMAL,
-                                  disabledforeground="#000000")
+                                  state=NORMAL,)
       self.choice_button_2.config(command=lambda: self.check_answer(
         answers[1], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[1]),
-                                  state=NORMAL,
-                                 disabledforeground="#000000")
+                                  state=NORMAL,)
       self.choice_button_3.config(command=lambda: self.check_answer(
         answers[2], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[2]),
-                                  state=NORMAL,
-                                 disabledforeground="#000000")
+                                  state=NORMAL,)
       self.choice_button_4.config(command=lambda: self.check_answer(
         answers[3], question_list, settings_list, start_time, score),
                                   text="{}".format(answers[3]),
-                                  state=NORMAL,
-                                 disabledforeground="#000000")
+                                  state=NORMAL,)
 
     else:
       self.answer_entry.delete(0, END)
@@ -505,6 +501,7 @@ class quiz:
         print("Correct!")
         self.output_label.config(text="Correct!", fg="#008000")
         score += 1
+        self.home_button.config(command=lambda:self.send_home("home", score))
       else:
         with open("wrong_questions.txt", "a") as file:
           file.write("question: {} {} {} = {}. input: {}\n".format(question_list[0], question_list[1], question_list[2], question_list[3], submitted_answer))
@@ -525,27 +522,26 @@ class quiz:
       elif settings_list[0] == "quiz mode: typed input\n":
         self.submit_button.config(state=DISABLED)
       quiz_time = time.time() - start_time
-      if quiz_time <= 20:
-        self.quiz_frame.after(2500, lambda: self.generate_question(settings_list, start_time, score))
+      if quiz_time <= 60:
+        self.quiz_frame.after(1500, lambda: self.generate_question(settings_list, start_time, score))
       else:
-        with open("history.txt", "r") as file:
-          history_list = file.readlines()
-          print(history_list)
-        if history_list[0] != "0\n":
-          with open("history.txt", "a") as file:
-           file.write("\n{}".format(score))
-        else:
-          with open("history.txt", "w") as file:
-            file.writelines("{}".format(score))
         self.quiz_frame.after(2500, self.output_label.config(fg="#FF0000", text="Time up! Score: {}".format(score)))
-        #self.output_label.config(fg="#FF0000", text="Time up! Score: {}".format(score))
-        self.quiz_frame.after(2500, lambda:self.home_button_pressed("home"))
-        #self.home_button_pressed("home")
+        self.quiz_frame.after(2500, lambda:self.send_home("home", score))
     except ValueError:
       print("Invalid Value! Did you make a typo?")
       self.output_label.config(text="Invalid Value", fg="#FF0000")
 
-  def home_button_pressed(self, button):
+  def send_home(self, button, score):
+    print(score)
+    if score != 0:
+      with open("history.txt", "r") as file:
+        history_list = file.readlines()
+      if history_list[0] != "0":
+        with open("history.txt", "a") as file:
+         file.write("\n{}".format(score))
+      else:
+        with open("history.txt", "w") as file:
+          file.writelines("{}".format(score))
     if button == "home":
       self.quiz_window.destroy()
       main_menu()
@@ -558,11 +554,87 @@ class history:
 
     button = ""
     self.history_window = Tk()
+    self.history_window.title("History/Export")
     print("history")
 
     self.history_frame = Frame(padx=10, pady=10)
     self.history_frame.grid()
 
+    self.title_label = Label(self.history_frame,
+                             text="History",
+                             font=("Arial", "12", "bold"),
+                             fg="#000000")
+    self.title_label.grid(row=0)
+
+    self.score_frame = Frame(self.history_frame, padx=10, pady=10)
+    self.score_frame.grid(row=1)
+
+    self.addition_title = Label(self.score_frame, text="Addition\nScores:", font=("Arial", "8", "bold"), fg="#000000")
+    self.addition_title.grid(row=0, column=0)
+
+    self.subtraction_title = Label(self.score_frame, text="Subtraction\nScores:", font=("Arial", "8", "bold"), fg="#000000")
+    self.subtraction_title.grid(row=0, column=1)
+
+    self.multiplication_title = Label(self.score_frame, text="Multiplication\nScores:", font=("Arial", "8", "bold"), fg="#000000")    
+    self.multiplication_title.grid(row=0, column=2)
+    
+    self.division_title = Label(self.score_frame, text="Division\nScores:", font=("Arial", "8", "bold"), fg="#000000")  
+    self.division_title.grid(row=0, column=3)
+
+    self.addition_score_one = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.addition_score_one.grid(row=1, column=0)
+    
+    self.addition_score_two = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.addition_score_two.grid(row=2, column=0)
+    
+    self.addition_score_three = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.addition_score_three.grid(row=3, column=0)
+    
+    self.addition_score_four = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.addition_score_four.grid(row=4, column=0)
+    
+    self.subtraction_score_one = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.subtraction_score_one.grid(row=1, column=1)
+    
+    self.subtraction_score_two = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.subtraction_score_two.grid(row=2, column=1)
+    
+    self.subtraction_score_three = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.subtraction_score_three.grid(row=3, column=1)
+    
+    self.subtraction_score_four = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.subtraction_score_four.grid(row=4, column=1)
+    
+    self.multiplication_score_one = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.multiplication_score_one.grid(row=1, column=2)
+    
+    self.multiplication_score_two = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.multiplication_score_two.grid(row=2, column=2)
+    
+    self.multiplication_score_three = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.multiplication_score_three.grid(row=3, column=2)
+    
+    self.multiplication_score_four = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.multiplication_score_four.grid(row=4, column=2)
+    
+    self.division_score_one = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.division_score_one.grid(row=1, column=3)
+    
+    self.division_score_two = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.division_score_two.grid(row=2, column=3)
+    
+    self.division_score_three = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.division_score_three.grid(row=3, column=3)
+    
+    self.division_score_four = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.division_score_four.grid(row=4, column=3)
+
+    self.high_score_label = Label(self.history_frame, text="High Score:", font=("Arial", "8", "bold"))
+    self.high_score_label.grid(row=2)
+
+    self.high_score = Label(self.history_frame, text="0", font=("Arial", "12", "bold"))
+    self.high_score.grid(row=3)
+    
     self.home_button = Button(self.history_frame,
                               text="Home",
                               bg="#A1E887",
@@ -570,7 +642,10 @@ class history:
                               font=("Arial", "8", "bold"),
                               width=20,
                               command=lambda: self.home_button_pressed("home"))
-    self.home_button.grid(row=0)
+    self.home_button.grid(row=10)
+
+  
+
 
   def home_button_pressed(self, button):
     if button == "home":
