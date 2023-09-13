@@ -21,14 +21,27 @@ class main_menu:
     selected_level = StringVar()
     selected_level.set("Select a quiz type")
     level_options = ["Addition", "Subtraction", "Multiplication", "Division"]
+    high_scores = [0, 0, 0, 0]
 
     # Set up system to retrieve scores from history file
-    with open("history.txt", "r") as history_file:
-      history = [int(x) for x in history_file.readlines()]
+    with open("Addition_scores.txt", "r") as history_file:
+      addition_history = [int(x) for x in history_file.readlines()]
+    with open("Subtraction_scores.txt", "r") as history_file:
+      subtraction_history = [int(x) for x in history_file.readlines()]
+    with open("Multiplication_scores.txt", "r") as history_file:
+      multiplication_history = [int(x) for x in history_file.readlines()]
+    with open("Division_scores.txt", "r") as history_file:
+      division_history = [int(x) for x in history_file.readlines()]
     # Retrieve high score
-    high_score = max(history)
+    high_scores[0] = max(addition_history)
+    high_scores[1] = max(subtraction_history)
+    high_scores[2] = max(multiplication_history)
+    high_scores[3] = max(division_history)
+
+    high_score = max(high_scores)
+    
     # Retrieve mean score
-    mean_score = round(sum(history) / len(history))
+    mean_score = round((sum(addition_history) + sum(subtraction_history) + sum(multiplication_history) + sum(division_history)) / (len(addition_history) + len(subtraction_history) + len(multiplication_history) + len(division_history)))
 
     # Form a frame to place all elements on
     self.main_frame = Frame(padx=10, pady=10)
@@ -124,7 +137,7 @@ class main_menu:
 
     # Check what quiz type was last selected and disable that button
     with open("settings.txt") as file:
-      settings_list = file.readlines()
+      settings_list = [x for x in file.readlines()]
     if settings_list[0] == "quiz mode: multiple choice\n":
       self.multiple_choice_button.config(state=DISABLED)
     elif settings_list[0] == "quiz mode: typed input\n":
@@ -193,7 +206,7 @@ class main_menu:
     with open("settings.txt", "r") as file:
       settings_list = [x for x in file.readlines()]
 
-    settings_list[1] = "level selected: {}\n".format(level)
+    settings_list[1] = "{}\n".format(level)
     with open("settings.txt", "w") as file:
       file.writelines(settings_list)
 
@@ -211,7 +224,7 @@ class main_menu:
       history()
     elif button == "start":
       #Check if user has chosen a quiz level; if they have go to the quiz, if not ask them to.
-      if settings_list[1] != "level selected: Select a quiz type\n":
+      if settings_list[1] != "Select a quiz type\n":
         self.main_window.destroy()
         quiz(level)
       else:
@@ -226,8 +239,8 @@ class main_menu:
       settings_list[0] = "quiz mode: {}\n".format(button)
 
       # write new settings list back to file
-      with open("settings.txt", "w") as file:
-        file.writelines(settings_list)
+      #with open("settings.txt", "w") as file:
+      #  file.writelines(settings_list)
 
       if button == "multiple choice":
         self.multiple_choice_button.config(state=DISABLED)
@@ -251,12 +264,20 @@ class instructions:
   def __init__(self):
 
     button = ""
+    instructions = "Lorem Ipsum Dolor"
     self.instructions_window = Tk()
+    self.instructions_window.title("Instructions")
     print("instructions")
 
     self.instructions_frame = Frame(padx=10, pady=10)
     self.instructions_frame.grid()
 
+    self.instructions_title = Label(self.instructions_frame,
+                                   text="Instructions",
+                                   font=("Arial", "12", "bold"),
+                                   width=40)
+    self.instructions_title.grid(row=0)
+    
     self.home_button = Button(self.instructions_frame,
                               text="Home",
                               bg="#A1E887",
@@ -264,7 +285,7 @@ class instructions:
                               font=("Arial", "8", "bold"),
                               width=20,
                               command=lambda: self.home_button_pressed("home"))
-    self.home_button.grid(row=0)
+    self.home_button.grid(row=2)
 
   def home_button_pressed(self, button):
     if button == "home":
@@ -356,9 +377,6 @@ class quiz:
                                 font=("arial", "20", "bold"))
     self.question_label.grid(row=0)
 
-    with open("settings.txt", "r") as file:
-      settings_list = [x for x in file.readlines()]
-
     if settings_list[0] == "quiz mode: multiple choice\n":
       self.choice_button_1 = Button(self.quiz_frame,
                                     text="option one",
@@ -427,7 +445,7 @@ class quiz:
                               fg="#000000",
                               font=("Arial", "8", "bold"),
                               width=20,
-                              command=lambda:self.send_home("home", score))
+                              command=lambda:self.send_home("home", score, settings_list))
 
     self.home_button.grid(row=10)
     self.generate_question(settings_list, start_time, score)
@@ -440,11 +458,11 @@ class quiz:
     number_1 = random.randint(1, 20)
     number_2 = random.randint(1, 20)
 
-    if settings_list[1] == "level selected: Addition\n":
+    if settings_list[1] == "Addition\n":
       number_3 = number_1 + number_2
       question_list = [number_2, "+", number_1, number_3]
 
-    elif settings_list[1] == "level selected: Subtraction\n":
+    elif settings_list[1] == "Subtraction\n":
       if number_1 > number_2:
         number_3 = number_1 - number_2
         question_list = [number_1, "-", number_2, number_3]
@@ -452,11 +470,11 @@ class quiz:
         number_3 = number_2 - number_1
         question_list = [number_2, "-", number_1, number_3]
 
-    elif settings_list[1] == "level selected: Multiplication\n":
+    elif settings_list[1] == "Multiplication\n":
       number_3 = number_1 * number_2
       question_list = [number_1, "x", number_2, number_3]
 
-    elif settings_list[1] == "level selected: Division\n":
+    elif settings_list[1] == "Division\n":
       number_3 = number_1 * number_2
       question_list = [number_3, "÷", number_2, number_1]
 
@@ -501,7 +519,7 @@ class quiz:
         print("Correct!")
         self.output_label.config(text="Correct!", fg="#008000")
         score += 1
-        self.home_button.config(command=lambda:self.send_home("home", score))
+        self.home_button.config(command=lambda:self.send_home("home", score, settings_list))
       else:
         with open("wrong_questions.txt", "a") as file:
           file.write("question: {} {} {} = {}. input: {}\n".format(question_list[0], question_list[1], question_list[2], question_list[3], submitted_answer))
@@ -526,21 +544,22 @@ class quiz:
         self.quiz_frame.after(1500, lambda: self.generate_question(settings_list, start_time, score))
       else:
         self.quiz_frame.after(2500, self.output_label.config(fg="#FF0000", text="Time up! Score: {}".format(score)))
-        self.quiz_frame.after(2500, lambda:self.send_home("home", score))
+        self.quiz_frame.after(2500, lambda:self.send_home("home", score, settings_list))
     except ValueError:
       print("Invalid Value! Did you make a typo?")
       self.output_label.config(text="Invalid Value", fg="#FF0000")
 
-  def send_home(self, button, score):
+  def send_home(self, button, score, settings_list):
     print(score)
+    quiz_type = settings_list[1].strip()
     if score != 0:
-      with open("history.txt", "r") as file:
+      with open("{}_scores.txt".format(quiz_type), "r") as file:
         history_list = file.readlines()
       if history_list[0] != "0":
-        with open("history.txt", "a") as file:
+        with open("{}_scores.txt".format(quiz_type), "a") as file:
          file.write("\n{}".format(score))
       else:
-        with open("history.txt", "w") as file:
+        with open("{}_scores.txt".format(quiz_type), "w") as file:
           file.writelines("{}".format(score))
     if button == "home":
       self.quiz_window.destroy()
@@ -629,24 +648,147 @@ class history:
     self.division_score_four = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
     self.division_score_four.grid(row=4, column=3)
 
-    self.high_score_label = Label(self.history_frame, text="High Score:", font=("Arial", "8", "bold"))
-    self.high_score_label.grid(row=2)
-
-    self.high_score = Label(self.history_frame, text="0", font=("Arial", "12", "bold"))
-    self.high_score.grid(row=3)
+    self.high_score_label = Label(self.score_frame, text="High scores:", font=("Arial", "12", "bold"))
+    self.high_score_label.grid(row=5, columnspan=4)
     
-    self.home_button = Button(self.history_frame,
+    self.high_score_a = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.high_score_a.grid(row=6, column=0)
+
+    self.high_score_s = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.high_score_s.grid(row=6, column=1)
+
+    self.high_score_m = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.high_score_m.grid(row=6, column=2)
+
+    self.high_score_d = Label(self.score_frame, text="0", font=("Arial", "8", "bold"))
+    self.high_score_d.grid(row=6, column=3)
+
+    self.button_frame = Frame(self.history_frame, padx=10, pady=10)
+    self.button_frame.grid(row=2)
+
+    self.export_button = Button(self.button_frame, 
+                               text="Export",
+                               bg="#A1E887",
+                               fg="#000000",
+                               font=("Arial", "8", "bold"),
+                               width=10,
+                               command=lambda:self.export_history("export"))
+    self.export_button.grid(row=0, column=0)
+
+    self.clear_button = Button(self.button_frame,
+                               text="Clear",
+                               bg="#A1E887",
+                               fg="#000000",
+                               font=("Arial", "8", "bold"),
+                               width=10,
+                               command=lambda:self.clear_history("clear"))
+    self.clear_button.grid(row=0, column=1)
+    
+    self.home_button = Button(self.button_frame,
                               text="Home",
                               bg="#A1E887",
                               fg="#000000",
                               font=("Arial", "8", "bold"),
-                              width=20,
-                              command=lambda: self.home_button_pressed("home"))
-    self.home_button.grid(row=10)
+                              width=10,
+                              command=lambda:self.home_button_pressed("home"))
+    self.home_button.grid(row=0, column=2)
 
+    self.retrieve_scores()
+
+  def retrieve_scores(self):
+    # Set up system to retrieve scores from history file
+    with open("Addition_scores.txt", "r") as history_file:
+      addition_history = [int(x) for x in history_file.readlines()]
+    with open("Subtraction_scores.txt", "r") as history_file:
+      subtraction_history = [int(x) for x in history_file.readlines()]
+    with open("Multiplication_scores.txt", "r") as history_file:
+      multiplication_history = [int(x) for x in history_file.readlines()]
+    with open("Division_scores.txt", "r") as history_file:
+      division_history = [int(x) for x in history_file.readlines()]
+
+    addition_history.reverse()
+    subtraction_history.reverse()
+    multiplication_history.reverse()
+    division_history.reverse()
+
+    #Set scores to output
+    try:
+      self.addition_score_one.config(text=addition_history[0])    
+      self.addition_score_two.config(text=addition_history[1])    
+      self.addition_score_three.config(text=addition_history[2])
+      self.addition_score_four.config(text=addition_history[3])
+    except IndexError:
+      pass
+    try:
+      self.subtraction_score_one.config(text=subtraction_history[0])
+      self.subtraction_score_two.config(text=subtraction_history[1])
+      self.subtraction_score_three.config(text=subtraction_history[2])
+      self.subtraction_score_four.config(text=subtraction_history[3])
+    except IndexError:
+      pass
+    try: 
+      self.multiplication_score_one.config(text=multiplication_history[0])
+      self.multiplication_score_two.config(text=multiplication_history[1])
+      self.multiplication_score_three.config(text=multiplication_history[2])
+      self.multiplication_score_four.config(text=multiplication_history[3])
+    except IndexError:
+      pass
+    try:
+      self.division_score_one.config(text=division_history[0])
+      self.division_score_two.config(text=division_history[1])
+      self.division_score_three.config(text=division_history[2])
+      self.division_score_four.config(text=division_history[3])
+    except IndexError:
+      pass
+
+    self.high_score_a.config(text=max(addition_history))
+    self.high_score_s.config(text=max(subtraction_history))
+    self.high_score_m.config(text=max(multiplication_history))
+    self.high_score_d.config(text=max(division_history))
+
+  def export_history(self, button):
+    if button == "export":
+      with open("Addition_scores.txt", "r") as file:
+        scores_a = [int(x) for x in file.readlines()]
+      with open("Subtraction_scores.txt", "r") as file:
+        scores_s = [int(x) for x in file.readlines()]
+      with open("Multiplication_scores.txt", "r") as file:
+        scores_m = [int(x) for x in file.readlines()]
+      with open("Division_scores.txt", "r") as file:
+        scores_d = [int(x) for x in file.readlines()]
+
+      scores_a.reverse()
+      scores_s.reverse()
+      scores_m.reverse()
+      scores_d.reverse()
+      
+      with open("exported_scores.txt", "w") as file:
+        file.writelines("Addition Scores:")
+        for x in scores_a:
+          file.writelines("\n{}".format(x))
+        file.writelines("\n\nSubtraction Scores:")
+        for x in scores_s:
+          file.writelines("\n{}".format(x))
+        file.writelines("\n\nMultiplication Scores:")
+        for x in scores_m:
+          file.writelines("\n{}".format(x))
+        file.writelines("\n\nDivision Scores:")
+        for x in scores_d:
+          file.writelines("\n{}".format(x))
   
-
-
+  def clear_history(self, button):
+    if button == "clear":
+      with open("Addition_scores.txt", "w") as file:
+        file.write("0")
+      with open("Subtraction_scores.txt", "w") as file:
+        file.write("0")
+      with open("Multiplication_scores.txt", "w") as file:
+        file.write("0")
+      with open("Division_scores.txt", "w") as file:
+        file.write("0")
+      self.history_window.destroy()
+      history()
+  
   def home_button_pressed(self, button):
     if button == "home":
       self.history_window.destroy()
