@@ -1,2 +1,2 @@
-quiz mode: typed input
+quiz mode: multiple choice
 Addition

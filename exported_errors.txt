@@ -1,5 +1,0 @@
-Past errors:
-
-question: 16 x 17 = 272. input: 282
-question: 9 x 15 = 135. input: 125
-question: 17 x 5 = 85. input: 80

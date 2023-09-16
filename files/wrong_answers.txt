@@ -5,3 +5,7 @@ question: 12 - 11 = 1. input: 5
 question: 8 - 1 = 7. input: 8
 question: 16 - 4 = 12. input: 6
 question: 7 + 18 = 25. input: 26
+question: 16 + 7 = 23. input: 25
+question: 13 + 15 = 28. input: 38
+question: 2 + 18 = 20. input: 24
+question: 17 + 8 = 25. input: 17
