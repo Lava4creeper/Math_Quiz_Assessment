@@ -1,0 +1,7 @@
+question: 17 x 5 = 85. input: 80
+question: 9 x 15 = 135. input: 125
+question: 16 x 17 = 272. input: 282
+question: 12 - 11 = 1. input: 5
+question: 8 - 1 = 7. input: 8
+question: 16 - 4 = 12. input: 6
+question: 7 + 18 = 25. input: 26

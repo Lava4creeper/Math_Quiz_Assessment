@@ -1,2 +1,2 @@
 quiz mode: typed input
-Select a quiz type
+Addition

@@ -2,10 +2,10 @@ Addition Scores:
 0
 
 Subtraction Scores:
-0
+16
 
 Multiplication Scores:
-1
+0
 
 Division Scores:
 0
